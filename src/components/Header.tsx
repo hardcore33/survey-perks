@@ -1,4 +1,4 @@
-import { User, LogOut, Award } from "lucide-react";
+import { User, LogOut, Award, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -8,9 +8,11 @@ interface HeaderProps {
   points?: number;
   isAuthenticated: boolean;
   onSignOut?: () => void;
+  onAdminAccess?: () => void;
 }
 
-export function Header({ userName, userEmail, points = 0, isAuthenticated, onSignOut }: HeaderProps) {
+export function Header({ userName, userEmail, points = 0, isAuthenticated, onSignOut, onAdminAccess }: HeaderProps) {
+  const isAdmin = userEmail === 'admin@empresa.com'; // Mock admin check
   return (
     <Card className="bg-gradient-primary text-white border-0 shadow-lg">
       <div className="p-6">
@@ -34,17 +36,31 @@ export function Header({ userName, userEmail, points = 0, isAuthenticated, onSig
                 </div>
                 <div className="text-sm text-white/80">
                   {userName || userEmail}
+                  {isAdmin && <span className="ml-2 text-xs bg-white/20 px-2 py-1 rounded">Admin</span>}
                 </div>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onSignOut}
-                className="border-white/20 text-white hover:bg-white/10"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sair
-              </Button>
+              <div className="flex gap-2">
+                {isAdmin && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={onAdminAccess}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Admin
+                  </Button>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={onSignOut}
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="flex items-center gap-2 text-white/80">
