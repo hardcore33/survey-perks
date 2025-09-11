@@ -6,7 +6,8 @@ import { AdminStats } from "@/components/admin/AdminStats";
 import { QuestionManager } from "@/components/admin/QuestionManager";
 import { RewardManager } from "@/components/admin/RewardManager";
 import { UserManager } from "@/components/admin/UserManager";
-import { Question, Reward, User } from "@/types/admin";
+import { MaterialManager } from "@/components/admin/MaterialManager";
+import { Question, Reward, User, Material } from "@/types/admin";
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -32,6 +33,25 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
     { id: 3, name: "Maria Costa", email: "maria@empresa.com", points: 650, surveys: 3, referrals: 1 }
   ]);
 
+  const [materials, setMaterials] = useState<Material[]>([
+    { 
+      id: 1, 
+      title: "Manual do Colaborador", 
+      description: "Guia completo para novos funcionários",
+      type: "manual",
+      content: "Este manual contém todas as informações necessárias para integração de novos colaboradores...",
+      createdAt: "2024-01-15T10:00:00Z"
+    },
+    { 
+      id: 2, 
+      title: "Protocolo de Atendimento", 
+      description: "Diretrizes para atendimento ao cliente",
+      type: "atendimento",
+      content: "Siga estas etapas para garantir um atendimento de qualidade...",
+      createdAt: "2024-01-20T14:30:00Z"
+    }
+  ]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -51,6 +71,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
         <TabsList>
           <TabsTrigger value="questions">Perguntas</TabsTrigger>
           <TabsTrigger value="rewards">Recompensas</TabsTrigger>
+          <TabsTrigger value="materials">Materiais</TabsTrigger>
           <TabsTrigger value="users">Usuários</TabsTrigger>
         </TabsList>
 
@@ -65,6 +86,13 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
           <RewardManager 
             rewards={rewards} 
             onRewardsChange={setRewards} 
+          />
+        </TabsContent>
+
+        <TabsContent value="materials" className="space-y-4">
+          <MaterialManager 
+            materials={materials} 
+            onMaterialsChange={setMaterials} 
           />
         </TabsContent>
 

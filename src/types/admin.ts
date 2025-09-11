@@ -20,3 +20,13 @@ export interface User {
   surveys: number;
   referrals: number;
 }
+
+export interface Material {
+  id: number;
+  title: string;
+  description: string;
+  type: 'avaliacao' | 'leitura' | 'manual' | 'atendimento';
+  fileUrl?: string;
+  content?: string;
+  createdAt: string;
+}
