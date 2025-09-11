@@ -7,8 +7,9 @@ import { SurveyForm } from "@/components/SurveyForm";
 import { ReferralForm } from "@/components/ReferralForm";
 import { RewardsShop } from "@/components/RewardsShop";
 import { AdminDashboard } from "@/components/AdminDashboard";
+import { MaterialsPage } from "@/pages/MaterialsPage";
 
-type View = 'login' | 'dashboard' | 'survey' | 'referral' | 'rewards' | 'admin';
+type View = 'login' | 'dashboard' | 'survey' | 'referral' | 'rewards' | 'admin' | 'materials';
 
 interface User {
   email: string;
@@ -75,6 +76,12 @@ const Index = () => {
         {currentView === 'rewards' && user && (
           <RewardsShop
             userPoints={user.points}
+            onBack={() => handleNavigate('dashboard')}
+          />
+        )}
+
+        {currentView === 'materials' && (
+          <MaterialsPage
             onBack={() => handleNavigate('dashboard')}
           />
         )}

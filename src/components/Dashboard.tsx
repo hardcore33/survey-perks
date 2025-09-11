@@ -1,4 +1,4 @@
-import { FileText, Users, Gift, TrendingUp } from "lucide-react";
+import { FileText, Users, Gift, TrendingUp, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -46,7 +46,7 @@ export function Dashboard({ userName, points = 0, onNavigate }: DashboardProps) 
       </Card>
 
       {/* Action Cards */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => onNavigate('survey')}>
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 bg-brand-primary/10 rounded-full flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors">
@@ -94,6 +94,23 @@ export function Dashboard({ userName, points = 0, onNavigate }: DashboardProps) 
           <CardContent>
             <Button className="w-full bg-brand-accent hover:bg-brand-accent/90 text-black">
               Ver Recompensas
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => onNavigate('materials')}>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+              <BookOpen className="h-6 w-6 text-blue-500" />
+            </div>
+            <CardTitle className="text-xl">Materiais</CardTitle>
+            <CardDescription>
+              Acesse documentos e manuais
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full" variant="outline">
+              Ver Materiais
             </Button>
           </CardContent>
         </Card>
