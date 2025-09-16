@@ -262,50 +262,79 @@ function MaterialGrid({ materials }: { materials: Material[] }) {
                 <span className="text-xs text-muted-foreground">
                   {new Date(material.createdAt).toLocaleDateString('pt-BR')}
                 </span>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="sm" variant="outline">
-                      <Eye className="h-4 w-4 mr-2" />
-                      Ler
+                <div className="flex gap-2">
+                  {material.fileUrl && (
+                    <Button size="sm" variant="outline" asChild>
+                      <a 
+                        href={material.fileUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <FileText className="h-4 w-4 mr-2" />
+                        PDF
+                      </a>
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl max-h-[80vh]">
-                    <DialogHeader>
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-5 w-5" />
-                        <DialogTitle>{material.title}</DialogTitle>
-                      </div>
-                      <DialogDescription>
-                        {material.description}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <ScrollArea className="h-[60vh] w-full">
-                      <div className="prose prose-sm max-w-none p-4">
-                        {material.content?.split('\n').map((line, index) => {
-                          if (line.startsWith('# ')) {
-                            return <h1 key={index} className="text-2xl font-bold mt-6 mb-4">{line.slice(2)}</h1>;
-                          }
-                          if (line.startsWith('## ')) {
-                            return <h2 key={index} className="text-xl font-semibold mt-4 mb-3">{line.slice(3)}</h2>;
-                          }
-                          if (line.startsWith('### ')) {
-                            return <h3 key={index} className="text-lg font-medium mt-3 mb-2">{line.slice(4)}</h3>;
-                          }
-                          if (line.startsWith('- ')) {
-                            return <li key={index} className="ml-4">{line.slice(2)}</li>;
-                          }
-                          if (line.match(/^\d+\. /)) {
-                            return <li key={index} className="ml-4 list-decimal">{line.replace(/^\d+\. /, '')}</li>;
-                          }
-                          if (line.trim() === '') {
-                            return <br key={index} />;
-                          }
-                          return <p key={index} className="mb-2">{line}</p>;
-                        })}
-                      </div>
-                    </ScrollArea>
-                  </DialogContent>
-                </Dialog>
+                  )}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button size="sm" variant="outline">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ler
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[80vh]">
+                      <DialogHeader>
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-5 w-5" />
+                          <DialogTitle>{material.title}</DialogTitle>
+                        </div>
+                        <DialogDescription>
+                          {material.description}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <ScrollArea className="h-[60vh] w-full">
+                        <div className="prose prose-sm max-w-none p-4">
+                          {material.content?.split('\n').map((line, index) => {
+                            if (line.startsWith('# ')) {
+                              return <h1 key={index} className="text-2xl font-bold mt-6 mb-4">{line.slice(2)}</h1>;
+                            }
+                            if (line.startsWith('## ')) {
+                              return <h2 key={index} className="text-xl font-semibold mt-4 mb-3">{line.slice(3)}</h2>;
+                            }
+                            if (line.startsWith('### ')) {
+                              return <h3 key={index} className="text-lg font-medium mt-3 mb-2">{line.slice(4)}</h3>;
+                            }
+                            if (line.startsWith('- ')) {
+                              return <li key={index} className="ml-4">{line.slice(2)}</li>;
+                            }
+                            if (line.match(/^\d+\. /)) {
+                              return <li key={index} className="ml-4 list-decimal">{line.replace(/^\d+\. /, '')}</li>;
+                            }
+                            if (line.trim() === '') {
+                              return <br key={index} />;
+                            }
+                            return <p key={index} className="mb-2">{line}</p>;
+                          })}
+                        </div>
+                        {material.fileUrl && (
+                          <div className="border-t p-4">
+                            <h5 className="font-medium mb-2">Arquivo PDF</h5>
+                            <Button variant="outline" asChild>
+                              <a 
+                                href={material.fileUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                              >
+                                <FileText className="h-4 w-4 mr-2" />
+                                Abrir PDF em nova aba
+                              </a>
+                            </Button>
+                          </div>
+                        )}
+                      </ScrollArea>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </CardContent>
           </Card>
