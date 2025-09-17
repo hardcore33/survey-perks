@@ -30,3 +30,16 @@ export interface Material {
   content?: string;
   createdAt: string;
 }
+
+export interface RewardRequest {
+  id: number;
+  userId: number;
+  userName: string;
+  userEmail: string;
+  rewardId: number;
+  rewardTitle: string;
+  rewardPoints: number;
+  status: 'pending' | 'approved' | 'rejected';
+  requestedAt: string;
+  processedAt?: string;
+}

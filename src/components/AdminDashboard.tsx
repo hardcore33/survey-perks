@@ -5,9 +5,10 @@ import { ArrowLeft } from "lucide-react";
 import { AdminStats } from "@/components/admin/AdminStats";
 import { QuestionManager } from "@/components/admin/QuestionManager";
 import { RewardManager } from "@/components/admin/RewardManager";
+import { RewardRequestManager } from "@/components/admin/RewardRequestManager";
 import { UserManager } from "@/components/admin/UserManager";
 import { MaterialManager } from "@/components/admin/MaterialManager";
-import { Question, Reward, User, Material } from "@/types/admin";
+import { Question, Reward, User, Material, RewardRequest } from "@/types/admin";
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -52,6 +53,43 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
     }
   ]);
 
+  const [rewardRequests, setRewardRequests] = useState<RewardRequest[]>([
+    {
+      id: 1,
+      userId: 1,
+      userName: "Ana Silva",
+      userEmail: "ana@empresa.com",
+      rewardId: 1,
+      rewardTitle: "Vale Refeição",
+      rewardPoints: 500,
+      status: "pending",
+      requestedAt: "2024-01-22T09:30:00Z"
+    },
+    {
+      id: 2,
+      userId: 2,
+      userName: "João Santos",
+      userEmail: "joao@empresa.com",
+      rewardId: 2,
+      rewardTitle: "Fone Bluetooth",
+      rewardPoints: 1200,
+      status: "pending",
+      requestedAt: "2024-01-21T14:15:00Z"
+    },
+    {
+      id: 3,
+      userId: 3,
+      userName: "Maria Costa",
+      userEmail: "maria@empresa.com",
+      rewardId: 1,
+      rewardTitle: "Vale Refeição",
+      rewardPoints: 500,
+      status: "approved",
+      requestedAt: "2024-01-20T11:00:00Z",
+      processedAt: "2024-01-20T16:30:00Z"
+    }
+  ]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -71,6 +109,7 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
         <TabsList>
           <TabsTrigger value="questions">Perguntas</TabsTrigger>
           <TabsTrigger value="rewards">Recompensas</TabsTrigger>
+          <TabsTrigger value="reward-requests">Solicitações</TabsTrigger>
           <TabsTrigger value="materials">Materiais</TabsTrigger>
           <TabsTrigger value="users">Usuários</TabsTrigger>
         </TabsList>
@@ -86,6 +125,13 @@ export function AdminDashboard({ onBack }: AdminDashboardProps) {
           <RewardManager 
             rewards={rewards} 
             onRewardsChange={setRewards} 
+          />
+        </TabsContent>
+
+        <TabsContent value="reward-requests" className="space-y-4">
+          <RewardRequestManager 
+            requests={rewardRequests} 
+            onRequestsChange={setRewardRequests} 
           />
         </TabsContent>
 
