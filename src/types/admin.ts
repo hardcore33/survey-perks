@@ -2,6 +2,7 @@ export interface Question {
   id: number;
   text: string;
   type: 'rating' | 'text';
+  points: number;
 }
 
 export interface Reward {

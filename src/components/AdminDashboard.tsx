@@ -17,9 +17,9 @@ interface AdminDashboardProps {
 export function AdminDashboard({ onBack }: AdminDashboardProps) {
   // Mock data - em produção viria do Supabase
   const [questions, setQuestions] = useState<Question[]>([
-    { id: 1, text: "Como você avalia o ambiente de trabalho?", type: "rating" },
-    { id: 2, text: "O que podemos melhorar na empresa?", type: "text" },
-    { id: 3, text: "Você recomendaria nossa empresa?", type: "rating" }
+    { id: 1, text: "Como você avalia o ambiente de trabalho?", type: "rating", points: 100 },
+    { id: 2, text: "O que podemos melhorar na empresa?", type: "text", points: 150 },
+    { id: 3, text: "Você recomendaria nossa empresa?", type: "rating", points: 100 }
   ]);
 
   const [rewards, setRewards] = useState<Reward[]>([

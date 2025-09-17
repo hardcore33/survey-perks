@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Question } from "@/types/admin";
@@ -16,9 +17,10 @@ interface QuestionManagerProps {
 
 export function QuestionManager({ questions, onQuestionsChange }: QuestionManagerProps) {
   const { toast } = useToast();
-  const [newQuestion, setNewQuestion] = useState<{ text: string; type: "rating" | "text" }>({ 
+  const [newQuestion, setNewQuestion] = useState<{ text: string; type: "rating" | "text"; points: number }>({ 
     text: "", 
-    type: "rating" 
+    type: "rating",
+    points: 100
   });
 
   const addQuestion = () => {
@@ -26,15 +28,21 @@ export function QuestionManager({ questions, onQuestionsChange }: QuestionManage
       toast({ title: "Erro", description: "Digite uma pergunta válida", variant: "destructive" });
       return;
     }
+    
+    if (newQuestion.points <= 0) {
+      toast({ title: "Erro", description: "A pontuação deve ser maior que zero", variant: "destructive" });
+      return;
+    }
 
     const question: Question = {
       id: Date.now(),
       text: newQuestion.text,
-      type: newQuestion.type
+      type: newQuestion.type,
+      points: newQuestion.points
     };
 
     onQuestionsChange([...questions, question]);
-    setNewQuestion({ text: "", type: "rating" });
+    setNewQuestion({ text: "", type: "rating", points: 100 });
     toast({ title: "Sucesso", description: "Pergunta adicionada com sucesso!" });
   };
 
@@ -74,6 +82,17 @@ export function QuestionManager({ questions, onQuestionsChange }: QuestionManage
               </SelectContent>
             </Select>
           </div>
+          <div className="grid gap-2">
+            <Label htmlFor="question-points">Pontuação</Label>
+            <Input
+              id="question-points"
+              type="number"
+              placeholder="100"
+              value={newQuestion.points}
+              onChange={(e) => setNewQuestion({ ...newQuestion, points: Number(e.target.value) })}
+              min="1"
+            />
+          </div>
           <Button onClick={addQuestion}>
             <Plus className="h-4 w-4 mr-2" />
             Adicionar Pergunta
@@ -86,9 +105,12 @@ export function QuestionManager({ questions, onQuestionsChange }: QuestionManage
             <div key={question.id} className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex-1">
                 <p className="font-medium">{question.text}</p>
-                <Badge variant="outline" className="mt-1">
-                  {question.type === 'rating' ? 'Avaliação' : 'Texto'}
-                </Badge>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline">
+                    {question.type === 'rating' ? 'Avaliação' : 'Texto'}
+                  </Badge>
+                  <Badge variant="secondary">{question.points} pontos</Badge>
+                </div>
               </div>
               <Button
                 variant="destructive"
