@@ -1,7 +1,7 @@
 export interface Database {
   public: {
     Tables: {
-      users: {
+      profiles: {
         Row: {
           id: string;
           email: string;
@@ -9,18 +9,16 @@ export interface Database {
           points: number;
           surveys_completed: number;
           referrals_count: number;
-          is_admin: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: {
-          id?: string;
+          id: string;
           email: string;
           name?: string | null;
           points?: number;
           surveys_completed?: number;
           referrals_count?: number;
-          is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -31,9 +29,28 @@ export interface Database {
           points?: number;
           surveys_completed?: number;
           referrals_count?: number;
-          is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
+        };
+      };
+      user_roles: {
+        Row: {
+          id: string;
+          user_id: string;
+          role: 'admin' | 'user';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          role: 'admin' | 'user';
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          role?: 'admin' | 'user';
+          created_at?: string;
         };
       };
       questions: {

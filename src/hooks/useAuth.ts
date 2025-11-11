@@ -1,22 +1,26 @@
 import { useState, useEffect } from 'react';
-import { User } from '@supabase/supabase-js';
+import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { SignUpInput, SignInInput } from '@/lib/auth-schemas';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar sessão atual
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Configurar listener ANTES de verificar sessão
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
 
-    // Escutar mudanças de autenticação
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    // DEPOIS verificar sessão existente
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -24,12 +28,27 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signInWithEmail = async (email: string) => {
-    const { data, error } = await supabase.auth.signInWithOtp({
+  const signUp = async ({ email, password, name }: SignUpInput) => {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { data, error } = await supabase.auth.signUp({
       email,
+      password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: redirectUrl,
+        data: {
+          name: name || email.split('@')[0],
+        },
       },
+    });
+    
+    return { data, error };
+  };
+
+  const signIn = async ({ email, password }: SignInInput) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
     
     return { data, error };
@@ -40,10 +59,24 @@ export function useAuth() {
     return { error };
   };
 
+  const checkIsAdmin = async (userId: string): Promise<boolean> => {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .single();
+    
+    return !!data;
+  };
+
   return {
     user,
+    session,
     loading,
-    signInWithEmail,
+    signUp,
+    signIn,
     signOut,
+    checkIsAdmin,
   };
 }

@@ -1,66 +1,94 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Header } from "@/components/Header";
 import { Dashboard } from "@/components/Dashboard";
-import { LoginForm } from "@/components/LoginForm";
 import { SurveyForm } from "@/components/SurveyForm";
 import { ReferralForm } from "@/components/ReferralForm";
 import { RewardsShop } from "@/components/RewardsShop";
 import { AdminDashboard } from "@/components/AdminDashboard";
 import { MaterialsPage } from "@/pages/MaterialsPage";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { Database } from "@/lib/supabase-types";
+import { Loader2 } from "lucide-react";
 
-type View = 'login' | 'dashboard' | 'survey' | 'referral' | 'rewards' | 'admin' | 'materials';
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
-interface User {
-  email: string;
-  name?: string;
-  points: number;
-}
+type View = 'dashboard' | 'survey' | 'referral' | 'rewards' | 'admin' | 'materials';
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<View>('login');
-  const [user, setUser] = useState<User | null>(null);
+  const [currentView, setCurrentView] = useState<View>('dashboard');
+  const [userPoints, setUserPoints] = useState(0);
+  const [userName, setUserName] = useState<string | undefined>();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { user, signOut, checkIsAdmin } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = (email: string) => {
-    // Simulate login - in real app this would come from Supabase
-    const mockUser: User = {
-      email,
-      name: email.split('@')[0],
-      points: 340
-    };
-    setUser(mockUser);
-    setCurrentView('dashboard');
+  useEffect(() => {
+    if (user) {
+      loadUserData();
+    }
+  }, [user]);
+
+  const loadUserData = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    
+    // Carregar perfil do usuário
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('name, points')
+      .eq('id', user.id)
+      .single<Pick<ProfileRow, 'name' | 'points'>>();
+
+    if (!error && data) {
+      setUserName(data.name ?? user.email?.split('@')[0]);
+      setUserPoints(data.points);
+    }
+
+    // Verificar se é admin
+    const adminStatus = await checkIsAdmin(user.id);
+    setIsAdmin(adminStatus);
+
+    setLoading(false);
   };
 
-  const handleSignOut = () => {
-    setUser(null);
-    setCurrentView('login');
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
   };
 
   const handleNavigate = (view: View) => {
     setCurrentView(view);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+      </div>
+    );
+  }
+
   return (
     <Layout>
       <div className="space-y-6">
         <Header
-          userName={user?.name}
+          userName={userName}
           userEmail={user?.email}
-          points={user?.points}
+          points={userPoints}
           isAuthenticated={!!user}
           onSignOut={handleSignOut}
-          onAdminAccess={() => handleNavigate('admin')}
+          onAdminAccess={isAdmin ? () => handleNavigate('admin') : undefined}
         />
 
-        {currentView === 'login' && (
-          <LoginForm onLogin={handleLogin} />
-        )}
-
-        {currentView === 'dashboard' && user && (
+        {currentView === 'dashboard' && (
           <Dashboard
-            userName={user.name}
-            points={user.points}
+            userName={userName}
+            points={userPoints}
             onNavigate={handleNavigate}
           />
         )}
@@ -73,9 +101,9 @@ const Index = () => {
           <ReferralForm onBack={() => handleNavigate('dashboard')} />
         )}
 
-        {currentView === 'rewards' && user && (
+        {currentView === 'rewards' && (
           <RewardsShop
-            userPoints={user.points}
+            userPoints={userPoints}
             onBack={() => handleNavigate('dashboard')}
           />
         )}
@@ -86,7 +114,7 @@ const Index = () => {
           />
         )}
 
-        {currentView === 'admin' && (
+        {currentView === 'admin' && isAdmin && (
           <AdminDashboard
             onBack={() => handleNavigate('dashboard')}
           />
