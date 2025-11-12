@@ -149,6 +149,29 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Função para atribuir automaticamente role admin para admin@sistema.com
+CREATE OR REPLACE FUNCTION public.handle_admin_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  -- Se o email for admin@sistema.com, atribui role de admin
+  IF NEW.email = 'admin@sistema.com' THEN
+    INSERT INTO public.user_roles (user_id, role)
+    VALUES (NEW.id, 'admin')
+    ON CONFLICT (user_id, role) DO NOTHING;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+-- Trigger para verificar e atribuir role admin automaticamente
+CREATE TRIGGER on_auth_admin_check
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_admin_user();
+
 -- Políticas RLS (Row Level Security)
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
