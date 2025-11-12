@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 export function Header({ userName, userEmail, points = 0, isAuthenticated, onSignOut, onAdminAccess }: HeaderProps) {
-  const isAdmin = userEmail === 'admin@empresa.com'; // Mock admin check
+  const isAdmin = !!onAdminAccess; // Se onAdminAccess existe, é admin
   return (
     <Card className="bg-gradient-primary text-white border-0 shadow-lg">
       <div className="p-6">
