@@ -4,7 +4,9 @@ import { supabase } from '@/lib/supabase';
 import { SignUpInput, SignInInput } from '@/lib/auth-schemas';
 
 // Modo de desenvolvimento local
-const isDevelopmentMode = import.meta.env.VITE_SUPABASE_URL === 'https://placeholder.supabase.co';
+const envUrl = (import.meta as any).env?.VITE_SUPABASE_URL as string | undefined;
+const envKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY as string | undefined;
+const isDevelopmentMode = !envUrl || !envKey || envUrl === 'https://placeholder.supabase.co' || envKey === 'placeholder-key';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
