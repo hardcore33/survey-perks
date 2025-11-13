@@ -62,7 +62,11 @@ const Index = () => {
   };
 
   const handleNavigate = (view: View) => {
-    setCurrentView(view);
+    if (view === 'admin' && isAdmin) {
+      navigate('/admin');
+    } else {
+      setCurrentView(view);
+    }
   };
 
   if (loading) {
@@ -110,12 +114,6 @@ const Index = () => {
 
         {currentView === 'materials' && (
           <MaterialsPage
-            onBack={() => handleNavigate('dashboard')}
-          />
-        )}
-
-        {currentView === 'admin' && isAdmin && (
-          <AdminDashboard
             onBack={() => handleNavigate('dashboard')}
           />
         )}
